@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/htmx.org@1.9.8"></script>
+    </head>
+    <body>
+        <div
+            hx-get="/domains"
+            hx-trigger="load"
+            hx-swap="innerHTML"
+        >
+            <div>Loading...</div>
+        </div>
+        <div>
+            Frontend
+        </div>
+    </body>
+</html>
