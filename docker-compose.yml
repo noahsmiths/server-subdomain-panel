@@ -1,0 +1,6 @@
+services:
+  domain-dashboard:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
