@@ -6,3 +6,4 @@ services:
       - "5555:5555"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    network_mode: "bridge"
