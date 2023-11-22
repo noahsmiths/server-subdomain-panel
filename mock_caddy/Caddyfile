@@ -1,0 +1,27 @@
+{
+	servers :443 {
+		name https
+	}
+	
+	servers :80 {
+		name http
+	}
+
+    servers :2019 {
+		name admin_server
+	}
+}
+
+dashboard.example.com {
+	reverse_proxy http://127.0.0.1:9443
+}
+
+domains.example.com {
+	reverse_proxy http://127.0.0.1:6000
+}
+
+:2019 {
+	reverse_proxy http://localhost:2019 {
+		header_up Host {upstream_hostport}
+	}
+}

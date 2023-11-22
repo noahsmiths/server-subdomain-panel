@@ -12,5 +12,9 @@
   "dependencies": {
     "express": "^4.18.2",
     "typed-html": "^3.0.1"
+  },
+  "scripts": {
+    "start": "CADDY_HOSTNAME=host.docker.internal bun run ./src/backend/index.tsx",
+    "dev": "docker compose -f ./mock_caddy/docker-compose.yml up -d && CADDY_HOSTNAME=localhost bun --hot run ./src/backend/index.tsx"
   }
 }
