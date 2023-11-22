@@ -6,5 +6,5 @@ COPY . .
 
 RUN bun install
 
-CMD ["bun", "."]
+CMD ["bun", "run", "start"]
 EXPOSE 5555
