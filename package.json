@@ -1,6 +1,6 @@
 {
   "name": "server-subdomain-panel",
-  "module": "src/bakend/index.ts",
+  "module": "src/backend/index.tsx",
   "type": "module",
   "devDependencies": {
     "@types/express": "^4.17.21",
