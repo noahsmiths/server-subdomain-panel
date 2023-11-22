@@ -4,6 +4,6 @@ services:
     restart: unless-stopped
     ports:
       - "5555:5555"
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
-    network_mode: "bridge"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    network_mode: "host"
