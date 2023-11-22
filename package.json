@@ -1,11 +1,15 @@
 {
   "name": "server-subdomain-panel",
-  "module": "index.ts",
+  "module": "src/bakend/index.ts",
   "type": "module",
   "devDependencies": {
     "bun-types": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "typed-html": "^3.0.1"
   }
 }
