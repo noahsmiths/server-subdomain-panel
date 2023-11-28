@@ -2,32 +2,97 @@ import express from 'express';
 import path from 'path';
 import * as elements from 'typed-html';
 import { CaddyHandler } from './types/CaddyHandler';
+import { getAllDomains } from './CaddyRequests';
 
 const app = express();
 const port = 5555;
 
+app.use(express.urlencoded({extended: true}));
 app.use('/', express.static(path.join(__dirname, '../frontend')));
 
 app.get('/domains', async (req, res) => {
-    let caddyResponse = await fetch(`http://${process.env.CADDY_HOSTNAME}:2019/config/apps/http/servers/https/routes`);
-    let activeHandlers: CaddyHandler[] = await caddyResponse.json() as CaddyHandler[];
+    let domains = await getAllDomains();
 
-    res.send(
-        <div>
+    res.send(domains);
+});
+
+app.post('/domains', async (req, res) => {
+    let domain: string = req.body.domain;
+    let port: string = req.body.port;
+
+    if (!domain || !port) {
+        res.status(400);
+        return;
+    }
+
+    if (parseInt(port) <= 3000) {
+        res.status(400).send('Port must be above 3000.');
+        return;
+    }
+
+    let domainHandler: CaddyHandler = {
+        handle: [
             {
-                activeHandlers.map((handler) => {
-                    let path = handler.handle[0].routes[0].handle[0].upstreams[0].dial;
-                    let domain = handler.match[0].host;
-
-                    return (
-                        <div>
-                            { domain } - { path }
-                        </div>
-                    )
-                })
+                handler: 'subroute',
+                routes: [
+                    {
+                        handle: [
+                            {
+                                handler: 'reverse_proxy',
+                                upstreams: [
+                                    {
+                                        dial: `127.0.0.1:${port}`
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
             }
-        </div>
-    );
+        ],
+        match: [{ host: [domain] }],
+        terminal: true
+    }
+
+    let caddyResponse = await fetch(`http://${process.env.CADDY_HOSTNAME}:2019/config/apps/http/servers/https/routes`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(domainHandler)
+    });
+
+    if (caddyResponse.status !== 200) {
+        res.status(503).send(await caddyResponse.json());
+        return;
+    }
+
+    let domains = await getAllDomains();
+
+    res.send(domains);
+});
+
+app.delete('/domains/:index', async (req, res) => {
+    let index = parseInt(req.params.index);
+
+    if (!Number.isInteger(index)) {
+        res.status(400).send("Index must be an integer. ex: /delete/1");
+        return;
+    }
+
+    let caddyResponse = await fetch(`http://${process.env.CADDY_HOSTNAME}:2019/config/apps/http/servers/https/routes/${index}`, {
+        method: 'DELETE'
+    });
+
+    if (caddyResponse.status !== 200) {
+        res.status(503).send(await caddyResponse.json());
+        return;
+    }
+
+    // Must requery all domains as deleting an index will shift all others above it
+    let domains = await getAllDomains();
+    
+    res.send(domains);
 });
 
 app.listen(port, () => {
