@@ -1,18 +1,18 @@
 export interface CaddyHandler {
-    handle: {
+    handle: Array<{
         handler: string,
-        routes: {
-            handle: {
+        routes: Array<{
+            handle: Array<{
                 handler: string,
                 transport?: any
-                upstreams: {
+                upstreams: Array<{
                     dial: string
-                }[]
-            }[]
-        }[]
-    }[],
-    match: {
-        host: string
-    }[],
+                }>
+            }>
+        }>
+    }>,
+    match: Array<{
+        host: Array<string>
+    }>,
     terminal: boolean
 }
