@@ -25,8 +25,8 @@ app.post('/domains', async (req, res) => {
         return;
     }
 
-    if (parseInt(port) <= 3000) {
-        res.status(400).send('Port must be above 3000.');
+    if (parseInt(port) <= 500) {
+        res.status(400).send('Port must be above 500.');
         return;
     }
 
